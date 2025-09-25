@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/app",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -35,6 +36,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/baymax_psy/",
               "budgets": [
                 {
                   "type": "initial",
@@ -91,6 +93,9 @@
               "src/styles.scss"
             ]
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
