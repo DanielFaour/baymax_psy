@@ -1,6 +1,6 @@
 <div  id="chat-container">
     <div id="messages">
-        <div *ngFor="let msg of messages">
+        <div *ngFor="let msg of messages | slice:1">
             <div [ngClass]="{'user-message': msg.sender === 'user', 'baymax-message': msg.sender === 'baymax'}">
                 <span>{{msg.text}}</span>
             </div>
