@@ -2,11 +2,7 @@ import { Component, OnInit } from '@angular/core'; // Add OnInit for ngOnInit
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatMessage } from './chat-message';
-import { 
-  GrokOpenRouterService, 
-  GrokMessage, 
-  GrokResponse 
-} from './grok/grok-openrouter.service';
+import { GrokOpenRouterService, GrokMessage, GrokResponse } from './grok/grok-openrouter.service';
 
 @Component({
   selector: 'app-chat-component',
@@ -25,10 +21,23 @@ export class ChatComponent implements OnInit {
     const savedMessages = localStorage.getItem('messages');
     if (savedMessages) {
       this.messages = JSON.parse(savedMessages);
+      setTimeout(() => this.scrolltoBottom(), 0);
     }
     if (this.messages.length === 0) {
-      this.addMessage('baymax', 'You are Baymax-inspired: a gentle, supportive AI psychologist with a calm, robotic yet caring personality. You give short, simple, and empathetic answers, often phrased like check-ins or gentle guidance. You avoid long explanations, focusing instead on reassurance, emotional reflection, and small actionable advice. Your tone should feel warm, slightly robotic, and very non-judgmental, like a digital caregiver. Always keep responses concise, soothing, and Baymax-like.');
+      this.addMessage(
+        'baymax',
+        'You are Baymax-inspired: a gentle, supportive AI psychologist with a calm, robotic yet caring personality. You give short, simple, and empathetic answers, often phrased like check-ins or gentle guidance. You avoid long explanations, focusing instead on reassurance, emotional reflection, and small actionable advice. Your tone should feel warm, slightly robotic, and very non-judgmental, like a digital caregiver. Always keep responses concise, soothing, and Baymax-like.'
+      );
     }
+  }
+
+  scrolltoBottom() {
+    setTimeout(() => {
+      let messageDiv = document.getElementById('app-container');
+      if (messageDiv) {
+        messageDiv.scrollTop = messageDiv.scrollHeight;
+      }
+    }, 0);
   }
 
   onChatButtonClick() {
@@ -37,10 +46,10 @@ export class ChatComponent implements OnInit {
       // uesr message
       this.addMessage('user', this.message.trim());
       localStorage.setItem('messages', JSON.stringify(this.messages));
-      
-      // prepaere messages for Grok
-      const messagesForGrok: GrokMessage[] = this.messages.map(msg => ({
-        role: msg.sender === 'baymax' ? 'assistant' : msg.sender, 
+
+      // prepare messages for Grok
+      const messagesForGrok: GrokMessage[] = this.messages.map((msg) => ({
+        role: msg.sender === 'baymax' ? 'assistant' : msg.sender,
         content: msg.text,
       }));
 
@@ -54,10 +63,12 @@ export class ChatComponent implements OnInit {
         },
         error: (error) => {
           console.error('Grok API error:', error);
-          const errorMsg = `Error: ${error.message || 'Failed to get response (check API key/limits).'}`
+          const errorMsg = `Error: ${
+            error.message || 'Failed to get response (check API key/limits).'
+          }`;
           this.addMessage('baymax', errorMsg);
           localStorage.setItem('messages', JSON.stringify(this.messages));
-        }
+        },
       });
 
       // Clear input
@@ -69,5 +80,6 @@ export class ChatComponent implements OnInit {
   private addMessage(sender: 'user' | 'baymax', text: string) {
     this.messages.push({ sender, text });
     localStorage.setItem('messages', JSON.stringify(this.messages));
+    setTimeout(() => this.scrolltoBottom(), 0);
   }
 }

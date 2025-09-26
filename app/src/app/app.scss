@@ -1,9 +1,9 @@
-.app-container {
+#app-container {
     display: flex; /* Use flexbox for layout */
     flex-direction: column; /* Stack children vertically */
+    height: calc(100dvh - 60px); /* Full viewport height minus header height */
     overflow:hidden;
     overflow-y: auto;
-    height: 100dvh;
 }
 
 #chat-list {
@@ -14,6 +14,7 @@
     background-color: #0A0D0F;
     float: left;
     border-right: 1px solid #333;
+    
 }
 
 #chat-list h1 {

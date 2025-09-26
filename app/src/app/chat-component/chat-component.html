@@ -1,14 +1,25 @@
-<div  id="chat-container">
-    <div id="messages">
-        <div *ngFor="let msg of messages | slice:1">
-            <div [ngClass]="{'user-message': msg.sender === 'user', 'baymax-message': msg.sender === 'baymax'}">
-                <span>{{msg.text}}</span>
-            </div>
+<div id="chat-container">
+  <div id="messages">
+    <div *ngFor="let msg of messages | slice : 1">
+      <div
+        [ngClass]="{
+          'user-message': msg.sender === 'user',
+          'baymax-message': msg.sender === 'baymax'
+        }"
+      >
+        <span>{{ msg.text }}</span>
+      </div>
     </div>
+  </div>
+  <div id="blank-div"></div>
 </div>
-<div id="blank-div"></div>
 <div class="container" id="chat-input">
-  <input  (keyup.enter)="onChatButtonClick()" [(ngModel)]="message" placeholder="Type your message...">
+<input
+    (keyup.enter)="onChatButtonClick()"
+    (keydown.enter)="onChatButtonClick()"
+    [(ngModel)]="message"
+    placeholder="Type your message..."
+    autocomplete="off"
+/>
   <button (click)="onChatButtonClick()">Send</button>
 </div>
-
