@@ -21,6 +21,7 @@ export class ChatComponent implements OnInit {
     const savedMessages = localStorage.getItem('messages');
     if (savedMessages) {
       this.messages = JSON.parse(savedMessages);
+      if (this.messages.length > 1)
       setTimeout(() => this.scrolltoBottom(), 0);
     }
     if (this.messages.length === 0) {
@@ -38,6 +39,15 @@ export class ChatComponent implements OnInit {
         messageDiv.scrollTop = messageDiv.scrollHeight;
       }
     }, 0);
+  }
+
+  onClearButtonClick() {
+    this.messages = [];
+    localStorage.removeItem('messages');
+    this.addMessage(
+      'baymax',
+      'You are Baymax-inspired: a gentle, supportive AI psychologist with a calm, robotic yet caring personality. You give short, simple, and empathetic answers, often phrased like check-ins or gentle guidance. You avoid long explanations, focusing instead on reassurance, emotional reflection, and small actionable advice. Your tone should feel warm, slightly robotic, and very non-judgmental, like a digital caregiver. Always keep responses concise, soothing, and Baymax-like.'
+    );
   }
 
   onChatButtonClick() {
@@ -71,7 +81,7 @@ export class ChatComponent implements OnInit {
         },
       });
 
-      // Clear input
+      // clear input
       this.message = '';
     }
     console.log(this.messages);

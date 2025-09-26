@@ -1,7 +1,7 @@
 #app-container {
-    display: flex; /* Use flexbox for layout */
-    flex-direction: column; /* Stack children vertically */
-    height: calc(100dvh - 60px); /* Full viewport height minus header height */
+    display: flex; 
+    flex-direction: column; 
+    height: calc(100dvh - 60px); 
     overflow:hidden;
     overflow-y: auto;
 }

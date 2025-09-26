@@ -1,3 +1,5 @@
+<button id="clear-button" (click)="onClearButtonClick()">
+  Clear Chat </button>
 <div id="chat-container">
   <div id="messages">
     <div *ngFor="let msg of messages | slice : 1">
@@ -14,12 +16,13 @@
   <div id="blank-div"></div>
 </div>
 <div class="container" id="chat-input">
-<input
+  <input
     (keyup.enter)="onChatButtonClick()"
     (keydown.enter)="onChatButtonClick()"
     [(ngModel)]="message"
     placeholder="Type your message..."
     autocomplete="off"
-/>
-  <button (click)="onChatButtonClick()">Send</button>
+    id="input-field"
+  />
+  <button id="send-btn" (click)="onChatButtonClick()">Send</button>
 </div>

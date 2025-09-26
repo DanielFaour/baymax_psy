@@ -24,7 +24,7 @@ input, button {
 #chat-input {
     display: flex;
     align-items: center;
-    justify-content: center; /* center children horizontally */
+    justify-content: center;
     padding: 10px;
     box-sizing: border-box;
     background-color: #1D252A;
@@ -39,7 +39,6 @@ input, button {
 }
 
 #chat-input input {
-    /* remove flex:1 so input doesn't stretch to full width */
     width: 100%;
     max-width: 1200px;
     box-sizing: border-box;
@@ -49,20 +48,23 @@ input, button {
     appearance: none;
     align-items: center;
     justify-content: center;
-    /* display left as inline-block for normal input behaviour */
     display: inline-block;
 }
 
-#chat-input button {
+#chat-input #send-button {
     height: 50px;
     flex: 0 0 auto;
     margin-left: 10px;
 }
 
-input, button {
+#input-field,  #send-button {
     text-decoration: none;
     margin: 0;
     border-radius: 4px;
+}
+
+button:hover {
+    cursor: pointer;
 }
 
 input:focus {
@@ -94,4 +96,18 @@ input:focus {
     height: max-content;
     text-align: left;
     max-width: calc(70%);
+}
+
+#clear-button {
+    background-color: #B22222;
+    color: white;
+    padding: 10px;
+    position: absolute;
+    top: 5px;
+    right: 0;
+
+}
+
+#clear-button:hover {
+    background-color: #8B0000;
 }
