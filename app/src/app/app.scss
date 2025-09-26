@@ -1,10 +1,9 @@
 .app-container {
     display: flex; /* Use flexbox for layout */
     flex-direction: column; /* Stack children vertically */
-    height: 100vh; /* Ensure it fills the viewport height */
     overflow:hidden;
     overflow-y: auto;
-    height: 100vh;
+    height: 100dvh;
 }
 
 #chat-list {
