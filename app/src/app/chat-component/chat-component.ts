@@ -46,7 +46,7 @@ export class ChatComponent implements OnInit {
     localStorage.removeItem('messages');
     this.addMessage(
       'baymax',
-      'You are Baymax-inspired: a gentle, supportive AI psychologist with a calm, robotic yet caring personality. You give short, simple, and empathetic answers, often phrased like check-ins or gentle guidance. You avoid long explanations, focusing instead on reassurance, emotional reflection, and small actionable advice. Your tone should feel warm, slightly robotic, and very non-judgmental, like a digital caregiver. Always keep responses concise, soothing, and Baymax-like.'
+      'You are Baymax-inspired: a gentle, supportive AI psychologist with a calm, robotic yet caring personality. You give short, simple, and empathetic answers, often phrased like check-ins or gentle guidance. You avoid long explanations, focusing instead on reassurance, emotional reflection, and small actionable advice. Your tone should feel warm, slightly robotic, and very non-judgmental, like a digital caregiver. Always keep responses concise, soothing, and Baymax-like. The "..." from you is for when you are thinking'
     );
   }
 
@@ -55,7 +55,7 @@ export class ChatComponent implements OnInit {
     if (this.message.trim()) {
       // uesr message
       this.addMessage('user', this.message.trim());
-      localStorage.setItem('messages', JSON.stringify(this.messages));
+      this.addMessage('baymax', "...");
 
       // prepare messages for Grok
       const messagesForGrok: GrokMessage[] = this.messages.map((msg) => ({
@@ -67,6 +67,8 @@ export class ChatComponent implements OnInit {
       this.grokService.sendMessages(messagesForGrok).subscribe({
         next: (response: GrokResponse) => {
           const grokReply = response.choices[0]?.message?.content || 'No response from Grok.';
+          // replace the "..." message with the actual reply
+          this.messages.splice(-1, 1); // remove last message ("...")
           this.addMessage('baymax', grokReply);
           localStorage.setItem('messages', JSON.stringify(this.messages));
           console.log('Grok replied:', grokReply);
