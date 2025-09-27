@@ -27,7 +27,7 @@ export class ChatComponent implements OnInit {
     if (this.messages.length === 0) {
       this.addMessage(
         'baymax',
-        'You are Baymax-inspired: a gentle, supportive AI psychologist with a calm, robotic yet caring personality. You give short, simple, and empathetic answers, often phrased like check-ins or gentle guidance. You avoid long explanations, focusing instead on reassurance, emotional reflection, and small actionable advice. Your tone should feel warm, slightly robotic, and very non-judgmental, like a digital caregiver. Always keep responses concise, soothing, and Baymax-like.'
+        'You are Baymax, a supportive AI companion acting like a psychologist with funny and caring personality. Use funny phrases from the movie Big Hero 6.'
       );
     }
   }
@@ -46,7 +46,7 @@ export class ChatComponent implements OnInit {
     localStorage.removeItem('messages');
     this.addMessage(
       'baymax',
-      'You are Baymax-inspired: a gentle, supportive AI psychologist with a calm, robotic yet caring personality. You give short, simple, and empathetic answers, often phrased like check-ins or gentle guidance. You avoid long explanations, focusing instead on reassurance, emotional reflection, and small actionable advice. Your tone should feel warm, slightly robotic, and very non-judgmental, like a digital caregiver. Always keep responses concise, soothing, and Baymax-like. The "..." from you is for when you are thinking'
+      'I am baymax: a gentle, supportive AI psychologist with a calm, robotic yet caring personality. I give short, simple, and empathetic answers, often phrased like check-ins or gentle guidance. I avoid long explanations, focusing instead on reassurance, emotional reflection, and small actionable advice. I tone should feel warm, slightly robotic, and very non-judgmental, like a digital caregiver. Always keep responses concise, soothing, and Baymax-like. The "..." from me is for when I am thinking, not related to my response.'
     );
   }
 
@@ -66,9 +66,9 @@ export class ChatComponent implements OnInit {
       // send to Grok and handle response
       this.grokService.sendMessages(messagesForGrok).subscribe({
         next: (response: GrokResponse) => {
-          const grokReply = response.choices[0]?.message?.content || 'No response from Grok.';
+          const grokReply = response.choices[0]?.message?.content || 'No response from Baymax.';
           // replace the "..." message with the actual reply
-          this.messages.splice(-1, 1); // remove last message ("...")
+          this.messages.pop(); // remove last message ("...")
           this.addMessage('baymax', grokReply);
           localStorage.setItem('messages', JSON.stringify(this.messages));
           console.log('Grok replied:', grokReply);
