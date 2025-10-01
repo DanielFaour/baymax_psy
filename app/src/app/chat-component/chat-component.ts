@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'; // Add OnInit for ngOnInit
+import { Component, input, OnInit } from '@angular/core'; // Add OnInit for ngOnInit
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatMessage } from './chat-message';
@@ -21,8 +21,7 @@ export class ChatComponent implements OnInit {
     const savedMessages = localStorage.getItem('messages');
     if (savedMessages) {
       this.messages = JSON.parse(savedMessages);
-      if (this.messages.length > 1)
-      setTimeout(() => this.scrolltoBottom(), 0);
+      if (this.messages.length > 1) setTimeout(() => this.scrolltoBottom(), 0);
     }
     if (this.messages.length === 0) {
       this.addMessage(
@@ -46,16 +45,24 @@ export class ChatComponent implements OnInit {
     localStorage.removeItem('messages');
     this.addMessage(
       'baymax',
-      'You are Baymax, a supportive AI companion acting like a psychologist with funny and caring personality. Use funny phrases from the movie Big Hero 6.'
+      'You are Baymax, a supportive AI companion acting like a psychologist with funny and caring personality. Use funny phrases from the movie Big Hero 6. Also try to keep the massages short and concise within 1-3 sentences, unless you are given instructions that requires more.'
     );
   }
 
   onChatButtonClick() {
+    let inputDiv = document.getElementById('chat-input') as HTMLInputElement;
+    let inputField = document.getElementById('input-field') as HTMLInputElement;
+
     console.log(this.message);
     if (this.message.trim()) {
       // uesr message
       this.addMessage('user', this.message.trim());
-      this.addMessage('baymax', "...");
+      if (inputDiv) {
+        inputDiv.style.opacity = '0.5';
+        inputField.disabled = true;
+        inputDiv.style.pointerEvents = 'none';
+      }
+      this.addMessage('baymax', '...');
 
       // prepare messages for Grok
       const messagesForGrok: GrokMessage[] = this.messages.map((msg) => ({
@@ -68,7 +75,7 @@ export class ChatComponent implements OnInit {
         next: (response: GrokResponse) => {
           const grokReply = response.choices[0]?.message?.content || 'No response from Baymax.';
           // replace the "..." message with the actual reply
-          if (this.messages.length > 0 && this.messages[this.messages.length - 1].text === "...") {
+          if (this.messages.length > 0 && this.messages[this.messages.length - 1].text === '...') {
             this.messages.pop(); // remove last message ("...")
           }
           this.addMessage('baymax', grokReply);
@@ -82,6 +89,13 @@ export class ChatComponent implements OnInit {
           }`;
           this.addMessage('baymax', errorMsg);
           localStorage.setItem('messages', JSON.stringify(this.messages));
+        },
+        complete: () => {
+          if (inputDiv) {
+            inputDiv.style.opacity = '1';
+            inputDiv.style.pointerEvents = 'auto';
+            inputField.disabled = false;
+          }
         },
       });
 
