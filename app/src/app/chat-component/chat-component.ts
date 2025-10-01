@@ -44,10 +44,10 @@ export class ChatComponent implements OnInit {
   onClearButtonClick() {
     this.messages = [];
     localStorage.removeItem('messages');
-    // this.addMessage(
-    //   'baymax',
-    //   'You are Baymax, a supportive AI companion acting like a psychologist with funny and caring personality. Use funny phrases from the movie Big Hero 6.'
-    // );
+    this.addMessage(
+      'baymax',
+      'You are Baymax, a supportive AI companion acting like a psychologist with funny and caring personality. Use funny phrases from the movie Big Hero 6.'
+    );
   }
 
   onChatButtonClick() {
@@ -68,7 +68,9 @@ export class ChatComponent implements OnInit {
         next: (response: GrokResponse) => {
           const grokReply = response.choices[0]?.message?.content || 'No response from Baymax.';
           // replace the "..." message with the actual reply
-          this.messages.pop(); // remove last message ("...")
+          if (this.messages.length > 0 && this.messages[this.messages.length - 1].text === "...") {
+            this.messages.pop(); // remove last message ("...")
+          }
           this.addMessage('baymax', grokReply);
           localStorage.setItem('messages', JSON.stringify(this.messages));
           console.log('Grok replied:', grokReply);
