@@ -2,7 +2,7 @@ import { Component, input, OnInit } from '@angular/core'; // Add OnInit for ngOn
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatMessage } from './chat-message';
-import { OpenRouterService, BotMessage, BotResponse } from './grok/openrouter.service';
+import { OpenRouterService, BotMessage, BotResponse } from './ai-model/openrouter.service';
 
 @Component({
   selector: 'app-chat-component',
@@ -64,37 +64,47 @@ export class ChatComponent implements OnInit {
       }
       this.addMessage('baymax', '...');
 
-      // prepare messages for Grok
+      // prepare messages for Bot
       const messagesForBot: BotMessage[] = this.messages.map((msg) => ({
         role: msg.sender === 'baymax' ? 'assistant' : msg.sender,
         content: msg.text,
       }));
 
-      // send to Grok and handle response
+      // send to Bot and handle response
       this.botService.sendMessages(messagesForBot).subscribe({
         next: (response: BotResponse) => {
-          const grokReply = response.choices[0]?.message?.content || 'No response from Baymax.';
+          const botReply = response.choices[0]?.message?.content || 'No response from Baymax.';
           // replace the "..." message with the actual reply
           if (this.messages.length > 0 && this.messages[this.messages.length - 1].text === '...') {
             this.messages.pop(); // remove last message ("...")
           }
-          this.addMessage('baymax', grokReply);
+          this.addMessage('baymax', botReply);
           localStorage.setItem('messages', JSON.stringify(this.messages));
-          console.log('Grok replied:', grokReply);
+          console.log('Bot replied:', botReply);
         },
         error: (error) => {
-          console.error('Grok API error:', error);
+          console.error('OpenRouter API error:', error);
           const errorMsg = `Error: ${
             error.message || 'Failed to get response (check API key/limits).'
           }`;
           this.addMessage('baymax', errorMsg);
           localStorage.setItem('messages', JSON.stringify(this.messages));
+
+          if (this.messages.length > 0 && this.messages[this.messages.length - 1].text === '...') {
+            this.messages.pop(); // remove last message ("...")
+          }
+
+          inputDiv.style.opacity = '1';
+          inputDiv.style.pointerEvents = 'auto';
+          inputField.disabled = false;
+          inputField.focus();
         },
         complete: () => {
           if (inputDiv) {
             inputDiv.style.opacity = '1';
             inputDiv.style.pointerEvents = 'auto';
             inputField.disabled = false;
+            inputField.focus();
           }
         },
       });
