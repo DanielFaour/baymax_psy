@@ -1,41 +1,41 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment'; // Adjust path if your service is in a subfolder
+import { environment } from '../../../environments/environment';
 
-export interface GrokMessage {
+export interface BotMessage {
   role: 'user' | 'assistant' | 'system';
   content: string; // Text only
 }
 
-export interface GrokRequest {
+export interface BotRequest {
   model: string;
-  messages: GrokMessage[];
+  messages: BotMessage[];
   temperature?: number;
   stream?: boolean;
 }
 
-export interface GrokResponse {
+export interface BotResponse {
   choices: Array<{
-    message: GrokMessage;
+    message: BotMessage;
   }>;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class GrokOpenRouterService {
+export class OpenRouterService {
   private apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   private apiKey = environment.openRouterApiKey;
 
   constructor(private http: HttpClient) {}
 
-  sendMessages(messages: GrokMessage[], model: string = 'x-ai/grok-4-fast:free'): Observable<GrokResponse> {
+  sendMessages(messages: BotMessage[], model: string = 'z-ai/glm-4.5-air:free'): Observable<BotResponse> {
     if (!this.apiKey) {
       throw new Error('API key missing. Check environment file.');
     }
 
-    const requestBody: GrokRequest = {
+    const requestBody: BotRequest = {
       model,
       messages,
       temperature: 0.7, // Simple default
@@ -47,6 +47,6 @@ export class GrokOpenRouterService {
       'Content-Type': 'application/json',
     });
 
-    return this.http.post<GrokResponse>(this.apiUrl, requestBody, { headers });
+    return this.http.post<BotResponse>(this.apiUrl, requestBody, { headers });
   }
 }

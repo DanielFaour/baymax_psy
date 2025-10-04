@@ -2,7 +2,7 @@ import { Component, input, OnInit } from '@angular/core'; // Add OnInit for ngOn
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatMessage } from './chat-message';
-import { GrokOpenRouterService, GrokMessage, GrokResponse } from './grok/grok-openrouter.service';
+import { OpenRouterService, BotMessage, BotResponse } from './grok/openrouter.service';
 
 @Component({
   selector: 'app-chat-component',
@@ -15,7 +15,7 @@ export class ChatComponent implements OnInit {
   message: string = '';
   messages: ChatMessage[] = [];
 
-  constructor(private grokService: GrokOpenRouterService) {}
+  constructor(private botService: OpenRouterService) {}
 
   ngOnInit() {
     const savedMessages = localStorage.getItem('messages');
@@ -65,14 +65,14 @@ export class ChatComponent implements OnInit {
       this.addMessage('baymax', '...');
 
       // prepare messages for Grok
-      const messagesForGrok: GrokMessage[] = this.messages.map((msg) => ({
+      const messagesForBot: BotMessage[] = this.messages.map((msg) => ({
         role: msg.sender === 'baymax' ? 'assistant' : msg.sender,
         content: msg.text,
       }));
 
       // send to Grok and handle response
-      this.grokService.sendMessages(messagesForGrok).subscribe({
-        next: (response: GrokResponse) => {
+      this.botService.sendMessages(messagesForBot).subscribe({
+        next: (response: BotResponse) => {
           const grokReply = response.choices[0]?.message?.content || 'No response from Baymax.';
           // replace the "..." message with the actual reply
           if (this.messages.length > 0 && this.messages[this.messages.length - 1].text === '...') {
