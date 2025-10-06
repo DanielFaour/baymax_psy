@@ -21,6 +21,8 @@ export interface BotResponse {
   }>;
 }
 
+let apiModel = 'z-ai/glm-4.5-air:free'; // default model
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,7 +32,23 @@ export class OpenRouterService {
 
   constructor(private http: HttpClient) {}
 
-  sendMessages(messages: BotMessage[], model: string = 'z-ai/glm-4.5-air:free'): Observable<BotResponse> {
+  testConnection(): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.apiKey}`,
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.post(
+      this.apiUrl,
+      {
+        model: apiModel,
+        messages: [{ role: 'user', content: 'ping' }],
+      },
+      { headers }
+    );
+  }
+
+  sendMessages(messages: BotMessage[], model: string = apiModel): Observable<BotResponse> {
     if (!this.apiKey) {
       throw new Error('API key missing. Check environment file.');
     }

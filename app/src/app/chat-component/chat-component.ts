@@ -1,8 +1,8 @@
-import { Component, input, OnInit } from '@angular/core'; // Add OnInit for ngOnInit
+import { Component, input, OnInit, AfterViewInit } from '@angular/core'; // Add OnInit for ngOnInit
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatMessage } from './chat-message';
-import { OpenRouterService, BotMessage, BotResponse } from './ai-model/openrouter.service';
+import { OpenRouterService, BotMessage, BotResponse } from './openrouter-api/openrouter.service';
 
 @Component({
   selector: 'app-chat-component',
@@ -19,6 +19,7 @@ export class ChatComponent implements OnInit {
 
   ngOnInit() {
     const savedMessages = localStorage.getItem('messages');
+
     if (savedMessages) {
       this.messages = JSON.parse(savedMessages);
       if (this.messages.length > 1) setTimeout(() => this.scrolltoBottom(), 0);
@@ -29,6 +30,46 @@ export class ChatComponent implements OnInit {
         'You are Baymax, a supportive AI companion acting like a psychologist with funny and caring personality. Use funny phrases from the movie Big Hero 6. Keep answers short and concise within 1-3 sentences, unless you are given instructions that requires more.'
       );
     }
+  }
+
+  ngAfterViewInit() {
+    this.errorHandler();
+  }
+
+  errorHandler() {
+    let errorTextElement = document.getElementById('error-text') as HTMLInputElement;
+    let errorTextDiv = document.getElementById('error-div') as HTMLInputElement;
+    let closeBtn = document.getElementById('close-error-btn') as HTMLInputElement;
+
+    this.botService.testConnection().subscribe({
+      next: (response) => {
+        console.log('OpenRouter API connection successful:', response);
+      },
+      error: (error) => {
+        console.error('OpenRouter API connection error:', error);
+        console.log(error.status);
+        if (error.status == 429) {
+          // errorTextElement.innerText = 'Rate limit exceeded. Please try again later.';
+          errorTextElement.innerHTML = 'Rate limit exceeded. Please try again later.';
+          errorTextDiv.style.display = 'flex';
+          closeBtn.onclick = () => {
+            errorTextDiv.style.display = 'none';
+          }
+        } else if (error.status === 401) {
+          errorTextElement.innerText = 'Failed to get response. Check API key.';
+          errorTextDiv.style.display = 'flex';
+          closeBtn.onclick = () => {
+            errorTextDiv.style.display = 'none';
+          }
+        } else if (error.status === 404) {
+          errorTextElement.innerText = 'Failed to read API endpoint. Check URL.';
+          errorTextDiv.style.display = 'flex';
+          closeBtn.onclick = () => {
+            errorTextDiv.style.display = 'none';
+          }
+        }
+      },
+    });
   }
 
   scrolltoBottom() {
@@ -79,20 +120,16 @@ export class ChatComponent implements OnInit {
             this.messages.pop(); // remove last message ("...")
           }
           this.addMessage('baymax', botReply);
-          localStorage.setItem('messages', JSON.stringify(this.messages));
           console.log('Bot replied:', botReply);
         },
         error: (error) => {
-          console.error('OpenRouter API error:', error);
-          const errorMsg = `Error: ${
-            error.message || 'Failed to get response (check API key/limits).'
-          }`;
-          this.addMessage('baymax', errorMsg);
-          localStorage.setItem('messages', JSON.stringify(this.messages));
-
+          this.errorHandler();
           if (this.messages.length > 0 && this.messages[this.messages.length - 1].text === '...') {
             this.messages.pop(); // remove last message ("...")
           }
+          console.error('OpenRouter API error:', error);
+          const errorMsg = `No response. (API Error)`;
+          this.addMessage('baymax', errorMsg);
 
           inputDiv.style.opacity = '1';
           inputDiv.style.pointerEvents = 'auto';
